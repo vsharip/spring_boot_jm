@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<body>
+<h1>User list</h1>
+
+<table border="1">
+    <tr style="text-align: center; vertical-align: middle">
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Age</th>
+        <th>Email</th>
+        <th>Password</th>
+        <th>Roles</th>
+        <th>Operations</th>
+    </tr>
+
+    <tr th:each="user : ${allUsers}">
+        <td th:utext="${user.getFirstName()}" style="text-align: center; vertical-align: middle">Name</td>
+        <td th:utext="${user.getLastName()}" style="text-align: center; vertical-align: middle">Surname</td>
+        <td th:utext="${user.getEmail()}" style="text-align: center; vertical-align: middle">City</td>
+        <td th:utext="${user.getAge()}" style="text-align: center; vertical-align: middle">Age</td>
+        <td th:utext="${user.getPassword()}" style="text-align: center; vertical-align: middle">Password</td>
+        <td>
+            <div th:each="role :${user.getRoles()}" th:utext="${role.name}" style=
+                    "text-align: center; vertical-align: middle">Roles</div>
+        </td>
+        <td>
+            <div> <a th:href="@{/admin/{id}/update(id=${user.getId()})}">Update</a> </div>
+            <div> <a th:href="@{/admin/{id}/delete(id=${user.getId()})}">Delete</a> </div>
+        </td>
+    </tr>
+</table>
+<br/>
+<hr/>
+<a href="/admin/create">Add new user</a>
+<br/>
+<br/>
+<br/>
+<button type="button"><a href="/logout">Exit</a></button>
+</body>
+</html>
