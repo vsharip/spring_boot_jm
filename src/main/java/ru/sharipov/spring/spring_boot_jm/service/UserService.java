@@ -37,9 +37,9 @@ public class UserService {
         Set<Role> roleSet = new HashSet<>();
         if (userRepository.findByEmail(user.getEmail()) == null) {
             user.getRoles().stream().forEach(role -> {
-                        if (role.getName().equals("ROLE_ADMIN")) {
+                        if (role.getName().equals("ADMIN")) {
                             roleSet.add(roleRepository.getById(1L));
-                        } else if (role.getName().equals("ROLE_USER")) {
+                        } else if (role.getName().equals("USER")) {
                             roleSet.add(roleRepository.getById(2L));
                         }
                     }
@@ -58,9 +58,9 @@ public class UserService {
     public void updateUser(User user) {
         Set<Role> roleSet = new HashSet<>();
         user.getRoles().stream().forEach(role -> {
-            if (role.getName().equals("ROLE_ADMIN")) {
+            if (role.getName().equals("ADMIN")) {
                 roleSet.add(roleRepository.getById(1L));
-            } else if (role.getName().equals("ROLE_USER")) {
+            } else if (role.getName().equals("USER")) {
                 roleSet.add(roleRepository.getById(2L));
 
             }

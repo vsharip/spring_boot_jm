@@ -23,6 +23,18 @@ public class AdminPageController {
     @Autowired
     RoleService roleService;
 
+    @GetMapping(value = "/login")
+    public String loginPage() {
+        return "login";
+    }
+
+    @GetMapping(value = "/testAdminPage")
+    public String adminPAge(Model model) {
+            List<User> allUsers = userService.getAllUsers();
+            model.addAttribute("allUsers", allUsers);
+        return "bootstrap-admin-page-ViewAllUsers";
+    }
+
     @GetMapping("/admin")
     public String showAllUsers(Model model) {
         List<User> allUsers = userService.getAllUsers();
@@ -81,10 +93,18 @@ public class AdminPageController {
         return "redirect:/admin";
     }
 
+//    @GetMapping("/user")
+//    public String showInfoUser(Model model) {
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        model.addAttribute("user", userService.findByEmail(auth.getName()));
+//        return "user-info";
+//    }
+
     @GetMapping("/user")
     public String showInfoUser(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         model.addAttribute("user", userService.findByEmail(auth.getName()));
-        return "user-info";
+        return "bootstrap-user-info";
     }
+
 }
