@@ -1,0 +1,21 @@
+    .col-lg-10 {
+    background-color: #f8f9fa;
+    overflow-y: auto;
+    height: 100vh;
+}
+    #h5Email {
+    color: #f8f9fa;
+    font-weight: bold;
+}
+    #h5RoleSet {
+    color: #f8f9fa;
+    font-weight: normal;
+    margin-left: 5px
+}
+    #h5WithRole {
+    color: #f8f9fa;
+    font-weight: normal;
+    margin-left: 5px
+    }
+
+    .div1 { display: inline; }

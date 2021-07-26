@@ -30,8 +30,12 @@ public class AdminPageController {
 
     @GetMapping(value = "/testAdminPage")
     public String adminPAge(Model model) {
-            List<User> allUsers = userService.getAllUsers();
-            model.addAttribute("allUsers", allUsers);
+        List<User> allUsers = userService.getAllUsers();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        model.addAttribute("user", userService.findByEmail(auth.getName()));
+        model.addAttribute("newUser", new User());
+        model.addAttribute("roleList", roleService.getAllRoles());
+        model.addAttribute("allUsers", allUsers);
         return "bootstrap-admin-page-ViewAllUsers";
     }
 
@@ -43,7 +47,6 @@ public class AdminPageController {
     }
 
 
-
     @GetMapping("/admin/create")
     public String addUser(Model model) {
         model.addAttribute("user", new User());
@@ -51,7 +54,7 @@ public class AdminPageController {
         return "createNewUser";
     }
 
-    @PatchMapping("/")
+    @PostMapping("/")
     public String addUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "createNewUser";
