@@ -28,7 +28,7 @@ public class AdminPageController {
         return "login";
     }
 
-    @GetMapping(value = "/testAdminPage")
+    @GetMapping(value = "/admin")
     public String adminPAge(Model model) {
         List<User> allUsers = userService.getAllUsers();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -39,12 +39,12 @@ public class AdminPageController {
         return "bootstrap-admin-page-ViewAllUsers";
     }
 
-    @GetMapping("/admin")
-    public String showAllUsers(Model model) {
-        List<User> allUsers = userService.getAllUsers();
-        model.addAttribute("allUsers", allUsers);
-        return "admin-page-ViewAllUsers";
-    }
+//    @GetMapping("/admin")
+//    public String showAllUsers(Model model) {
+//        List<User> allUsers = userService.getAllUsers();
+//        model.addAttribute("allUsers", allUsers);
+//        return "admin-page-ViewAllUsers";
+//    }
 
 
     @GetMapping("/admin/create")
@@ -55,7 +55,7 @@ public class AdminPageController {
     }
 
     @PostMapping("/")
-    public String addUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+    public String addUser(@ModelAttribute("newUser") @Valid User user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "createNewUser";
         }
@@ -71,7 +71,18 @@ public class AdminPageController {
         return "update-user";
     }
 
-    @PutMapping("/{id}")
+//    @PutMapping("/{id}")
+//    public String updateUser(@PathVariable("id") Long id, @ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+//        if (bindingResult.hasErrors()) {
+//            user.setId(id);
+//            return "update-user";
+//        }
+//        userService.updateUser(user);
+//        return "redirect:/admin";
+//    }
+
+
+    @PutMapping("/update")
     public String updateUser(@PathVariable("id") Long id, @ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             user.setId(id);
@@ -81,11 +92,11 @@ public class AdminPageController {
         return "redirect:/admin";
     }
 
+
     @GetMapping("/admin/{id}/delete")
     public String deleteUser(Model model, @PathVariable("id") Long id) {
         User user = userService.getUser(id);
         model.addAttribute("user", user);
-//        userService.deleteById(user);
         return "delete-user";
     }
 
@@ -96,18 +107,18 @@ public class AdminPageController {
         return "redirect:/admin";
     }
 
-//    @GetMapping("/user")
-//    public String showInfoUser(Model model) {
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        model.addAttribute("user", userService.findByEmail(auth.getName()));
-//        return "user-info";
-//    }
 
     @GetMapping("/user")
     public String showInfoUser(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         model.addAttribute("user", userService.findByEmail(auth.getName()));
         return "bootstrap-user-info";
+    }
+
+    @GetMapping("/admin/findOne")
+    @ResponseBody
+    public User findOne(Long id) {
+        return userService.findById(id);
     }
 
 }

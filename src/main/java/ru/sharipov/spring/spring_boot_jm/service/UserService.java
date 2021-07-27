@@ -52,9 +52,6 @@ public class UserService {
     }
 
 
-
-
-
     public void updateUser(User user) {
         Set<Role> roleSet = new HashSet<>();
         user.getRoles().stream().forEach(role -> {
@@ -64,12 +61,14 @@ public class UserService {
                 roleSet.add(roleRepository.getById(2L));
 
             }
+            if (user.getPassword() != null) {
             String encryptPassword = passwordEncoder.encode(user.getPassword());
             user.setPassword(encryptPassword);
-            user.setRoles(roleSet);
-            userRepository.save(user);
-        });
-    }
+        }
+    });
+        user.setRoles(roleSet);
+        userRepository.save(user);
+    };
 
 
         public void deleteById (User user){
