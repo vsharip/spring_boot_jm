@@ -3,29 +3,18 @@
     overflow-y: auto;
     height: 100vh;
 }
-    #h5Email {
-    color: #f8f9fa;
-    font-weight: bold;
-}
-    #h5RoleSet {
-    color: #f8f9fa;
-    font-weight: normal;
-    margin-left: 5px
-}
-    #h5WithRole {
-    color: #f8f9fa;
-    font-weight: normal;
-    margin-left: 5px
-    }
+
 
     .div1 { display: inline; }
-    
+
     .form-group {
         align-items: center;
+        text-align: center;
         justify-content: center;
-        width: 400px;
+        width: 200px;
+        margin-bottom: 0px!important;
     }
-    
+
     .formCreateUser {
         padding: 20px;
         text-align: center;
@@ -33,10 +22,66 @@
         font-weight: bold;
     }
 
+    .myForm {
+        font-weight: bold;
+    }
+
+    .modal-body {
+        padding-top: 4px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #roleModalDelete,
+    #roleModalUpdate {
+        height: 60px;
+    }
+
+    #h5Email {
+        color: #f8f9fa;
+        font-weight: bold;
+    }
+    #h5RoleSet {
+        color: #f8f9fa;
+        font-weight: normal;
+        margin-left: 5px
+    }
+    #h5WithRole {
+        color: #f8f9fa;
+        font-weight: normal;
+        margin-left: 5px
+    }
+
     #selectRoleUser {
-        width: 100%;
+        width: 400px;
         height: 60px ;
     }
+
+    #selectRoleForm {
+        margin-top: 100px;
+    }
+    #submitAddUser {
+        margin-top: 10px;
+    }
+
+
+    #createUser1,
+    #createUser2,
+    #createUser3,
+    #createUser4,
+    #createUser5,
+    #createUser6
+    {
+        width: 400px;
+        margin-top: 10px;
+    }
+
+    #selectRoleFormModalDelete {
+        height: 1%;
+    }
+
+
 
 
 

@@ -24,6 +24,9 @@ public class UserService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Autowired
+    PasswordEncoder passwordEncoderNotPassword;
+
     public List<User> getAllUsers() {
         return (List<User>) userRepository.findAll();
     }
@@ -52,36 +55,41 @@ public class UserService {
     }
 
 
-    public void updateUser(User user) {
+    public void updateUser(User user) { ;
         Set<Role> roleSet = new HashSet<>();
-        user.getRoles().stream().forEach(role -> {
-            if (role.getName().equals("ADMIN")) {
-                roleSet.add(roleRepository.getById(1L));
-            } else if (role.getName().equals("USER")) {
-                roleSet.add(roleRepository.getById(2L));
+        if (user.getRoles() != null) {
+            user.getRoles().stream().forEach(role -> {
+                        if (role.getName().equals("ADMIN")) {
+                            roleSet.add(roleRepository.getById(1L));
+                        } else if (role.getName().equals("USER")) {
+                            roleSet.add(roleRepository.getById(2L));
 
-            }
-            if (user.getPassword() != null) {
+                        }
+                    }
+            );
+        }
+        if (user.getPassword() != null) {
             String encryptPassword = passwordEncoder.encode(user.getPassword());
             user.setPassword(encryptPassword);
+        } else {
+            String passwordNoSetup = passwordEncoderNotPassword.encode(user.getPassword());
+            user.setPassword(passwordNoSetup);
         }
-    });
-        user.setRoles(roleSet);
         userRepository.save(user);
-    };
-
-
-        public void deleteById (User user){
-            userRepository.delete(user);
-        }
-
-        public User findById (Long id){
-            return userRepository.findById(id).orElseThrow(() ->
-                    new IllegalArgumentException("Invalid user Id:" + id));
-        }
-
-        public User findByEmail (String email){
-            return userRepository.findByEmail(email);
-        }
-
     }
+
+
+    public void deleteById(User user) {
+        userRepository.delete(user);
+    }
+
+    public User findById(Long id) {
+        return userRepository.findById(id).orElseThrow(() ->
+                new IllegalArgumentException("Invalid user Id:" + id));
+    }
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+}

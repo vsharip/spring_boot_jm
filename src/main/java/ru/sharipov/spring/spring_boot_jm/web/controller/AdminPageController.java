@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.sharipov.spring.spring_boot_jm.entity.User;
@@ -32,19 +33,12 @@ public class AdminPageController {
     public String adminPAge(Model model) {
         List<User> allUsers = userService.getAllUsers();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        model.addAttribute("user", userService.findByEmail(auth.getName()));
+        model.addAttribute("userAuthorize", userService.findByEmail(auth.getName()));
         model.addAttribute("newUser", new User());
         model.addAttribute("roleList", roleService.getAllRoles());
         model.addAttribute("allUsers", allUsers);
         return "bootstrap-admin-page-ViewAllUsers";
     }
-
-//    @GetMapping("/admin")
-//    public String showAllUsers(Model model) {
-//        List<User> allUsers = userService.getAllUsers();
-//        model.addAttribute("allUsers", allUsers);
-//        return "admin-page-ViewAllUsers";
-//    }
 
 
     @GetMapping("/admin/create")
@@ -57,7 +51,7 @@ public class AdminPageController {
     @PostMapping("/")
     public String addUser(@ModelAttribute("newUser") @Valid User user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return "createNewUser";
+            return "redirect:/admin";
         }
         userService.addUser(user);
         return "redirect:/admin";
@@ -71,26 +65,15 @@ public class AdminPageController {
         return "update-user";
     }
 
-//    @PutMapping("/{id}")
-//    public String updateUser(@PathVariable("id") Long id, @ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
-//        if (bindingResult.hasErrors()) {
-//            user.setId(id);
-//            return "update-user";
-//        }
-//        userService.updateUser(user);
-//        return "redirect:/admin";
-//    }
-
 
     @PutMapping("/update")
-    public String updateUser(@PathVariable("id") Long id, @ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            user.setId(id);
-            return "update-user";
-        }
+    public String updateUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
         userService.updateUser(user);
         return "redirect:/admin";
     }
+
+
+
 
 
     @GetMapping("/admin/{id}/delete")
@@ -111,14 +94,7 @@ public class AdminPageController {
     @GetMapping("/user")
     public String showInfoUser(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        model.addAttribute("user", userService.findByEmail(auth.getName()));
+        model.addAttribute("userAuthorize", userService.findByEmail(auth.getName()));
         return "bootstrap-user-info";
     }
-
-    @GetMapping("/admin/findOne")
-    @ResponseBody
-    public User findOne(Long id) {
-        return userService.findById(id);
-    }
-
 }

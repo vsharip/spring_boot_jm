@@ -35,7 +35,6 @@ public class User implements UserDetails {
     private String email;
 
     @Column(name = "password")
-    @NotBlank
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
