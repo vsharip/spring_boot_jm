@@ -1,11 +1,11 @@
 package ru.sharipov.spring.spring_boot_jm.web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.sharipov.spring.spring_boot_jm.entity.User;
@@ -15,19 +15,36 @@ import ru.sharipov.spring.spring_boot_jm.service.UserService;
 import javax.validation.Valid;
 import java.util.List;
 
-@Controller
+@RestController
+@RequestMapping("/api")
 public class AdminPageController {
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @Autowired
-    RoleService roleService;
+    private RoleService roleService;
 
-    @GetMapping(value = "/login")
+    @GetMapping("/login")
     public String loginPage() {
         return "login";
     }
+
+
+    @GetMapping("/admin/all-users")
+    public List<User> allUsersPage() {
+        return userService.getAllUsers();
+    }
+
+    @GetMapping("/admin/user/{id}")
+    public User userPage(@PathVariable("id") Long id) {
+        return userService.getUser(id);
+    }
+
+//    @GetMapping(value = "/login")
+//    public String loginPage() {
+//        return "login";
+//    }
 
     @GetMapping(value = "/admin")
     public String adminPAge(Model model) {
@@ -40,14 +57,6 @@ public class AdminPageController {
         return "bootstrap-admin-page-ViewAllUsers";
     }
 
-
-    @GetMapping("/admin/create")
-    public String addUser(Model model) {
-        model.addAttribute("user", new User());
-        model.addAttribute("roleList", roleService.getAllRoles());
-        return "createNewUser";
-    }
-
     @PostMapping("/")
     public String addUser(@ModelAttribute("newUser") @Valid User user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -57,30 +66,10 @@ public class AdminPageController {
         return "redirect:/admin";
     }
 
-    @GetMapping("/admin/{id}/update")
-    public String updateUser(Model model, @PathVariable("id") Long id) {
-        User user = userService.findById(id);
-        model.addAttribute("user", user);
-        model.addAttribute("roleList", roleService.getAllRoles());
-        return "update-user";
-    }
-
-
     @PutMapping("/update")
     public String updateUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
         userService.updateUser(user);
         return "redirect:/admin";
-    }
-
-
-
-
-
-    @GetMapping("/admin/{id}/delete")
-    public String deleteUser(Model model, @PathVariable("id") Long id) {
-        User user = userService.getUser(id);
-        model.addAttribute("user", user);
-        return "delete-user";
     }
 
     @DeleteMapping("/{id}")
@@ -97,4 +86,30 @@ public class AdminPageController {
         model.addAttribute("userAuthorize", userService.findByEmail(auth.getName()));
         return "bootstrap-user-info";
     }
+
+
+
+//    @GetMapping("/admin/create")
+//    public String addUser(Model model) {
+//        model.addAttribute("user", new User());
+//        model.addAttribute("roleList", roleService.getAllRoles());
+//        return "createNewUser";
+//    }
+
+//    @GetMapping("/admin/{id}/update")
+//    public String updateUser(Model model, @PathVariable("id") Long id) {
+//        User user = userService.findById(id);
+//        model.addAttribute("user", user);
+//        model.addAttribute("roleList", roleService.getAllRoles());
+//        return "update-user";
+//    }
+
+//
+//    @GetMapping("/admin/{id}/delete")
+//    public String deleteUser(Model model, @PathVariable("id") Long id) {
+//        User user = userService.getUser(id);
+//        model.addAttribute("user", user);
+//        return "delete-user";
+//    }
+
 }

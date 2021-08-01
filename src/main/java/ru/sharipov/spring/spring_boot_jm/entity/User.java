@@ -1,5 +1,6 @@
 package ru.sharipov.spring.spring_boot_jm.entity;
 
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

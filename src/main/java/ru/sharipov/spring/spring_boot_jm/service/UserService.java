@@ -27,8 +27,9 @@ public class UserService {
     @Autowired
     PasswordEncoder passwordEncoderNotPassword;
 
-    public List<User> getAllUsers() {
-        return (List<User>) userRepository.findAll();
+    public List <User> getAllUsers() {
+        List<User> userList = (List<User>) userRepository.findAll();
+        return userList;
     }
 
     public User getUser(Long id) {
