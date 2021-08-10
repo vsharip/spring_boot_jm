@@ -1,6 +1,8 @@
 package ru.sharipov.spring.spring_boot_jm.entity;
 
 
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -9,6 +11,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.Set;
+
+
 
 @Entity
 @Table(name = "users")

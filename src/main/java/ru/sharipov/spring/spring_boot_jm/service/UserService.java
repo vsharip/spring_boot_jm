@@ -3,16 +3,22 @@ package ru.sharipov.spring.spring_boot_jm.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.sharipov.spring.spring_boot_jm.EntityDTO.UserDTO;
+import ru.sharipov.spring.spring_boot_jm.EntityDTO.UserMapper;
 import ru.sharipov.spring.spring_boot_jm.entity.Role;
 import ru.sharipov.spring.spring_boot_jm.entity.User;
+import ru.sharipov.spring.spring_boot_jm.exception_handling.NoSuchUserException;
 import ru.sharipov.spring.spring_boot_jm.repository.RoleRepository;
 import ru.sharipov.spring.spring_boot_jm.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Service
+@Transactional
 public class UserService {
 
     @Autowired
@@ -27,56 +33,43 @@ public class UserService {
     @Autowired
     PasswordEncoder passwordEncoderNotPassword;
 
-    public List <User> getAllUsers() {
+    @Autowired
+    UserMapper userMapper;
+
+    public List<UserDTO> getAllUsers() {
         List<User> userList = (List<User>) userRepository.findAll();
-        return userList;
+        List<UserDTO> userDTOList = new ArrayList<>();
+        userList.stream().map(user -> userMapper.toDto(user))
+                .forEach(user -> userDTOList.add(user));
+//        userDTOList.forEach(System.out::println);
+        return userDTOList;
     }
+
 
     public User getUser(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
+                .orElseThrow(() -> new NoSuchUserException("There is no user with ID = " + id + " in DataBase"));
+
     }
 
-    public void addUser(User user) {
-        Set<Role> roleSet = new HashSet<>();
-        if (userRepository.findByEmail(user.getEmail()) == null) {
-            user.getRoles().stream().forEach(role -> {
-                        if (role.getName().equals("ADMIN")) {
-                            roleSet.add(roleRepository.getById(1L));
-                        } else if (role.getName().equals("USER")) {
-                            roleSet.add(roleRepository.getById(2L));
-                        }
-                    }
-            );
-            String encryptPassword = passwordEncoder.encode(user.getPassword());
-            user.setPassword(encryptPassword);
-            user.setRoles(roleSet);
-            userRepository.save(user);
-        }
-    }
-
-
-    public void updateUser(User user) { ;
-        Set<Role> roleSet = new HashSet<>();
+    public UserDTO addUser(User user) {
+        Set<Role> roles = new HashSet<>();
         if (user.getRoles() != null) {
             user.getRoles().stream().forEach(role -> {
                         if (role.getName().equals("ADMIN")) {
-                            roleSet.add(roleRepository.getById(1L));
+                            roles.add(roleRepository.getById(1L));
                         } else if (role.getName().equals("USER")) {
-                            roleSet.add(roleRepository.getById(2L));
+                            roles.add(roleRepository.getById(2L));
 
                         }
                     }
             );
         }
-        if (user.getPassword() != null) {
-            String encryptPassword = passwordEncoder.encode(user.getPassword());
-            user.setPassword(encryptPassword);
-        } else {
-            String passwordNoSetup = passwordEncoderNotPassword.encode(user.getPassword());
-            user.setPassword(passwordNoSetup);
-        }
-        userRepository.save(user);
+        String encryptPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encryptPassword);
+        user.setRoles(roles);
+        User user1 = userRepository.save(user);
+        return userMapper.toDto(user1);
     }
 
 
@@ -84,13 +77,9 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public User findById(Long id) {
-        return userRepository.findById(id).orElseThrow(() ->
-                new IllegalArgumentException("Invalid user Id:" + id));
-    }
 
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public UserDTO findByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+        return userMapper.toDto(user);
     }
-
 }

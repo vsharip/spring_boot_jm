@@ -1,22 +1,22 @@
 package ru.sharipov.spring.spring_boot_jm.web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.sharipov.spring.spring_boot_jm.EntityDTO.UserDTO;
+import ru.sharipov.spring.spring_boot_jm.EntityDTO.UserMapper;
+import ru.sharipov.spring.spring_boot_jm.entity.Role;
 import ru.sharipov.spring.spring_boot_jm.entity.User;
 import ru.sharipov.spring.spring_boot_jm.service.RoleService;
 import ru.sharipov.spring.spring_boot_jm.service.UserService;
 
-import javax.validation.Valid;
 import java.util.List;
 
-@RestController
-@RequestMapping("/api")
+@Controller
 public class AdminPageController {
 
     @Autowired
@@ -25,91 +25,74 @@ public class AdminPageController {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    UserMapper userMapper;
+
+
     @GetMapping("/login")
     public String loginPage() {
         return "login";
     }
 
-
-    @GetMapping("/admin/all-users")
-    public List<User> allUsersPage() {
-        return userService.getAllUsers();
+    @GetMapping("/user")
+    public String getAuthUser() {
+        return "rest-bootstrap-user-info";
     }
 
-    @GetMapping("/admin/user/{id}")
-    public User userPage(@PathVariable("id") Long id) {
-        return userService.getUser(id);
+    @GetMapping("/admin")
+    public String getAdminUser() {
+        return "rest-bootstrap-admin-page-ViewAllUsers";
     }
 
-//    @GetMapping(value = "/login")
-//    public String loginPage() {
-//        return "login";
-//    }
-
-    @GetMapping(value = "/admin")
-    public String adminPAge(Model model) {
-        List<User> allUsers = userService.getAllUsers();
+    @ResponseBody
+    @GetMapping("/user/user-auth")
+    public ResponseEntity<UserDTO> getUserSession() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        model.addAttribute("userAuthorize", userService.findByEmail(auth.getName()));
-        model.addAttribute("newUser", new User());
-        model.addAttribute("roleList", roleService.getAllRoles());
-        model.addAttribute("allUsers", allUsers);
-        return "bootstrap-admin-page-ViewAllUsers";
+        UserDTO userDTO = userService.findByEmail(auth.getName());
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
-    @PostMapping("/")
-    public String addUser(@ModelAttribute("newUser") @Valid User user, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "redirect:/admin";
-        }
-        userService.addUser(user);
-        return "redirect:/admin";
+
+    @ResponseBody
+    @GetMapping("/admin/all-users")
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        List<UserDTO> users = userService.getAllUsers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @PutMapping("/update")
-    public String updateUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
-        userService.updateUser(user);
-        return "redirect:/admin";
+
+    @ResponseBody
+    @GetMapping("/admin/all-roles")
+    public ResponseEntity<List<Role>> roleSet() {
+        List<Role> roleSet = roleService.getAllRoles();
+        return new ResponseEntity<>(roleSet, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public String deleteUser(@PathVariable("id") Long id) {
+    @ResponseBody
+    @GetMapping("/admin/{id}")
+    public ResponseEntity<UserDTO> getUser(@PathVariable("id") Long id) {
+        User user = userService.getUser(id);
+        UserDTO userDTO = userMapper.toDto(user);
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
+    }
+
+    @ResponseBody
+    @PostMapping("/admin/test")
+    public ResponseEntity<UserDTO> addUser(@RequestBody User user) {
+        return new ResponseEntity<>(userService.addUser(user), HttpStatus.OK);
+    }
+
+    @ResponseBody
+    @PutMapping("/admin/test")
+    public ResponseEntity<UserDTO> updateUser(@RequestBody User user) {
+        return new ResponseEntity<>(userService.addUser(user), HttpStatus.OK);
+    }
+
+    @ResponseBody
+    @DeleteMapping("/admin/{id}")
+    public ResponseEntity<Void> deleteUserRest(@PathVariable Long id) {
         User user = userService.getUser(id);
         userService.deleteById(user);
-        return "redirect:/admin";
+        return ResponseEntity.ok().build();
     }
-
-
-    @GetMapping("/user")
-    public String showInfoUser(Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        model.addAttribute("userAuthorize", userService.findByEmail(auth.getName()));
-        return "bootstrap-user-info";
-    }
-
-
-
-//    @GetMapping("/admin/create")
-//    public String addUser(Model model) {
-//        model.addAttribute("user", new User());
-//        model.addAttribute("roleList", roleService.getAllRoles());
-//        return "createNewUser";
-//    }
-
-//    @GetMapping("/admin/{id}/update")
-//    public String updateUser(Model model, @PathVariable("id") Long id) {
-//        User user = userService.findById(id);
-//        model.addAttribute("user", user);
-//        model.addAttribute("roleList", roleService.getAllRoles());
-//        return "update-user";
-//    }
-
-//
-//    @GetMapping("/admin/{id}/delete")
-//    public String deleteUser(Model model, @PathVariable("id") Long id) {
-//        User user = userService.getUser(id);
-//        model.addAttribute("user", user);
-//        return "delete-user";
-//    }
-
 }
