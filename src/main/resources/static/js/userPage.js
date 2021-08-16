@@ -1,29 +1,7 @@
-// ========================================================================================
-// Пример стартового JavaScript для отключения отправки форм при наличии недопустимых полей
-// (function () {
-//   'use strict'
-//   window.addEventListener('load', function () {
-//     // Получите все формы, к которым мы хотим применить пользовательские стили проверки Bootstrap
-//     const forms = document.getElementsByClassName('formCreateUser')
-//     // Зацикливайтесь на них и предотвращайте подчинение
-//     const validation = Array.prototype.filter.call(forms, function (form) {
-//       form.addEventListener('submit', function (event) {
-//         if (form.checkValidity() === false) {
-//           event.preventDefault()
-//           event.stopPropagation()
-//         }
-//         form.classList.add('was-validated')
-//       }, false)
-//     })
-//   }, false)
-// })()
-
-// ==================================================================
-
 async function userRest () {
   try {
     const response = await fetch('http://localhost:8080/user/user-auth')
-    console.log("Авториация" + response)
+    console.log('Авторизация:' + response)
     if (!response.ok) {
       throw Error('ERROR')
     }
@@ -253,7 +231,7 @@ modalUserUpdate.addEventListener('submit', async (e) => {
     update += '<td>' + '<button type="button" class="btn btn-danger btn-sm" ' +
       'id="buttonDeleteUser" data-toggle="modal" data-target="#modalDelete" value="' + json.id + '">Delete</button>' + '</td>'
     tr.after(update)
-    tr.remove();
+    tr.remove()
     $('#modalUpdate').modal('hide')
   }
 })
